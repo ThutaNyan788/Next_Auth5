@@ -4,6 +4,7 @@ import { auth ,signOut} from '@/auth'
 
 const SettingPage =async () => {
     const session = await auth();
+
   return (
     <div>
         <h1>SettingPage</h1>
