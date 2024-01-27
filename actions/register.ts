@@ -5,11 +5,13 @@ import bcrypt, { hash } from 'bcryptjs';
 import { RegisterSchema } from '@/schemas';
 import { db } from '@/lib/db';
 import { getUserByEmail } from '@/data/user';
+import { generateVerficationToken } from '@/lib/token';
+import { sendVerificationEmail } from '@/lib/mail';
 
 export const Register =async (values:z.infer<typeof RegisterSchema>)=>{
     const validateFields = RegisterSchema.safeParse(values);
 
-    console.log(validateFields);
+    // console.log(validateFields);
     
     if(!validateFields.success){
         return {error:"Invalid Fields!"}
@@ -32,7 +34,14 @@ export const Register =async (values:z.infer<typeof RegisterSchema>)=>{
         }
     })
 
+    const verificationToken = await generateVerficationToken(email);
     //TODO:: Send Verification token email
+    await sendVerificationEmail(
+        verificationToken.email,
+        verificationToken.token
+    );
+
+
     
-    return {success:"User Created"};
+    return {success:"Confirmation Email Sent!"};
 }
